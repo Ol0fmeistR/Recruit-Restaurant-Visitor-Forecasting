@@ -1,5 +1,5 @@
-# Recruit_Restaurant_Visitor_Forecasting_Kaggle
-Competition Description:
+## Visitor Forecasting (Recruit Holdings)
+**Competition Description:** <br>
 Running a thriving local restaurant isn't always as charming as first impressions appear. There are often all sorts of unexpected troubles popping up that could hurt business.
 
 One common predicament is that restaurants need to know how many customers to expect each day to effectively purchase ingredients and schedule staff members. This forecast isn't easy to make because many unpredictable factors affect restaurant attendance, like weather and local competition. It's even harder for newer restaurants with little historical data.
@@ -8,5 +8,5 @@ Recruit Holdings has unique access to key datasets that could make automated fut
 
 In this competition, you're challenged to use reservation and visitation data to predict the total number of visitors to a restaurant for future dates. This information will help restaurants be much more efficient and allow them to focus on creating an enjoyable dining experience for their customers.
 
-For the hpg_reserve dataset used in the competition, you can refer this link:
-https://www.kaggle.com/c/recruit-restaurant-visitor-forecasting/data
+For the hpg_reserve data, follow this <a href="https://www.kaggle.com/c/recruit-restaurant-visitor-forecasting/data">link</a>
+
