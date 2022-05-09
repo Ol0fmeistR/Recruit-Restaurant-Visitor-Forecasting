@@ -45,7 +45,6 @@ data['tes']['visit_date'] = data['tes']['visit_date'].dt.date
 unique_stores = data['tes']['air_store_id'].unique()
 stores = pd.concat([pd.DataFrame({'air_store_id': unique_stores, 'dow': [i]*len(unique_stores)}) for i in range(7)], axis=0, ignore_index=True).reset_index(drop=True)
 
-#sure it can be compressed...
 tmp = data['tra'].groupby(['air_store_id','dow'], as_index=False)['visitors'].min().rename(columns={'visitors':'min_visitors'})
 stores = pd.merge(stores, tmp, how='left', on=['air_store_id','dow']) 
 tmp = data['tra'].groupby(['air_store_id','dow'], as_index=False)['visitors'].mean().rename(columns={'visitors':'mean_visitors'})
@@ -58,7 +57,8 @@ tmp = data['tra'].groupby(['air_store_id','dow'], as_index=False)['visitors'].co
 stores = pd.merge(stores, tmp, how='left', on=['air_store_id','dow']) 
 
 stores = pd.merge(stores, data['as'], how='left', on=['air_store_id']) 
-# NEW FEATURES FROM Georgii Vyshnia
+
+# Feature engineering using George's suggestions
 stores['air_genre_name'] = stores['air_genre_name'].map(lambda x: str(str(x).replace('/',' ')))
 stores['air_area_name'] = stores['air_area_name'].map(lambda x: str(str(x).replace('-',' ')))
 lbl = preprocessing.LabelEncoder()
@@ -91,7 +91,7 @@ test['total_reserv_sum'] = test['rv1_x'] + test['rv1_y']
 test['total_reserv_mean'] = (test['rv2_x'] + test['rv2_y']) / 2
 test['total_reserv_dt_diff_mean'] = (test['rs2_x'] + test['rs2_y']) / 2
 
-# NEW FEATURES FROM JMBULL
+# Feature engineering on date type features
 train['date_int'] = train['visit_date'].apply(lambda x: x.strftime('%Y%m%d')).astype(int)
 test['date_int'] = test['visit_date'].apply(lambda x: x.strftime('%Y%m%d')).astype(int)
 train['var_max_lat'] = train['latitude'].max() - train['latitude']
@@ -99,7 +99,7 @@ train['var_max_long'] = train['longitude'].max() - train['longitude']
 test['var_max_lat'] = test['latitude'].max() - test['latitude']
 test['var_max_long'] = test['longitude'].max() - test['longitude']
 
-# NEW FEATURES FROM Georgii Vyshnia
+# Adding latitude + longitude because for some reason it improves rmsle
 train['lon_plus_lat'] = train['longitude'] + train['latitude'] 
 test['lon_plus_lat'] = test['longitude'] + test['latitude']
 
@@ -126,16 +126,7 @@ model2.fit(train[col], np.log1p(train['visitors'].values))
 model3.fit(train[col], np.log1p(train['visitors'].values))
 model4.fit(train[col], np.log1p(train['visitors'].values))
 
-"""preds1 = model1.predict(train[col])
-preds2 = model2.predict(train[col])
-preds3 = model3.predict(train[col])
-preds4 = model4.predict(train[col])
-
-print('RMSE GradientBoostingRegressor: ', RMSLE(np.log1p(train['visitors'].values), preds1))
-print('RMSE RandomForestRegressor: ', RMSLE(np.log1p(train['visitors'].values), preds2))
-print('RMSE XGBRegressor: ', RMSLE(np.log1p(train['visitors'].values), preds3))
-print('RMSE KNN: ', RMSLE(np.log1p(train['visitors'].values), preds4))"""
-
+#Making predictions
 preds1 = model1.predict(test[col])
 preds2 = model2.predict(test[col])
 preds3 = model3.predict(test[col])
@@ -146,7 +137,7 @@ test['visitors'] = np.expm1(test['visitors']).clip(lower=0.)
 sub1 = test[['id','visitors']].copy()
 del train; del data;
 
-# from hklee
+# weighted mean compressions for holidays and possibly golden week (maybe?)
 # https://www.kaggle.com/zeemeen/weighted-mean-comparisons-lb-0-497-1st/code
 dfs = { re.search('/([^/\.]*)\.csv', fn).group(1):
     pd.read_csv(fn)for fn in glob.glob('../input/*.csv')}
