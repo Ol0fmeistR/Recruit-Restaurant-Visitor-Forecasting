@@ -14,6 +14,8 @@ For the hpg_reserve data, follow this <a href="https://www.kaggle.com/c/recruit-
 
 **Location of the restaurants featured in the competition:** <br>
 
+One thing to keep in mind is that these locations are only an approximation of the actual geolocations in order to keep the data anonymous. <br>
+
 <kbd><img src="/Plots/locations.png"/></kbd> <br>
 
 
